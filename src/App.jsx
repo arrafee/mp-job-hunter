@@ -1,35 +1,38 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+/* eslint-disable no-unused-vars */
+import LandingPage from "./pages/LandingPage";
+import DetailJob from "./pages/DetailJob";
+import FindJobs from "./pages/FindJobs";
+import Jobs from "./pages/Admin/Jobs/Jobs";
+import { Navbar } from "./components/Navbar";
+import AddJobs from "./pages/Admin/Jobs/AddJobs";
+import { BrowserRouter, Route, Routes } from "react-router-dom";
+
+// import "./App.css";
 
 function App() {
-  const [count, setCount] = useState(0)
-
   return (
     <>
-      <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
+      {/* <BrowserRouter>
+        <header>
+          <Navbar />
+        </header>
+        <main>
+          <Routes>
+            <Route path="/" element={<LandingPage />} />
+            <Route path="/find-jobs" element={<FindJobs />} />
+            <Route path="/detail-job" element={<DetailJob />} />
+          </Routes>
+        </main>
+      </BrowserRouter> */}
+
+      <BrowserRouter>
+        <Routes>
+          <Route path="/jobs" element={<Jobs />} />
+          <Route path="/jobs/add-jobs" element={<AddJobs />} />
+        </Routes>
+      </BrowserRouter>
     </>
-  )
+  );
 }
 
-export default App
+export default App;

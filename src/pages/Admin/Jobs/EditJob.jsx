@@ -4,32 +4,36 @@ import Sidebar from "../../../components/Sidebar";
 import Topbar from "../../../components/Topbar";
 import axios from "axios";
 import { useNavigate, useParams } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { getJobById, updateJob } from "../../../redux/actions/jobs";
+import { AlertFailed, AlertSuccess } from "../../../components/Alert";
 const EditJobs = () => {
+  const dispatch = useDispatch();
   const navigate = useNavigate();
 
+  const job = useSelector((state) => state.jobs.jobById);
   const { id } = useParams();
 
   const [dataJob, setDataJob] = useState({});
 
   useEffect(() => {
-    axios
-      .get(`http://localhost:3000/jobs/${id}`)
-      .then((response) => {
-        setDataJob(response.data);
-      })
-      .catch((error) => {
-        console.log(error);
-      });
-  }, [id]);
+    dispatch(getJobById(id));
+  }, [dispatch, id]);
+
+  useEffect(() => {
+    setDataJob(job);
+  }, [job]);
 
   const [errorMsg, setErrorMsg] = useState({
     companyName: "",
     jobTitle: "",
     jobCategory: "",
     jobType: "",
+    skills: "",
     location: "",
     salary: "",
     jobDescription: "",
+    linkApply: "",
   });
 
   const onChangeValue = (e) => {
@@ -48,29 +52,48 @@ const EditJobs = () => {
       dataJob.jobTitle === "" ||
       dataJob.jobCategory === "" ||
       dataJob.jobType === "" ||
+      dataJob.skills === "" ||
       dataJob.location === "" ||
       dataJob.salary === 0 ||
-      dataJob.jobDescription === ""
+      dataJob.jobDescription === "" ||
+      dataJob.linkApply === ""
     ) {
       setErrorMsg({
         companyName: "Please provide a valid Company Name.",
         jobTitle: "Please provide a valid Job Name.",
         jobCategory: "Please select a valid Job Category.",
         jobType: "Please select a valid Job Type",
+        skills: "Please provide a valid Skills.",
         location: "Please provide a valid Location.",
         salary: "Please provide a valid Salary.",
         jobDescription: "Please provide a valid Job Description.",
+        linkApply: "Please provide a valid Link Apply.",
       });
     } else {
-      axios
-        .put(`http://localhost:3000/jobs/${id}`, dataJob)
-        .then(() => {
-          alert("Data berhasil diedit");
+      const slug = dataJob.jobCategory.split(" ");
+      const slugCategory = slug.join("-").toLowerCase();
+      const data = {
+        ...dataJob,
+        slugCategory: slugCategory,
+      };
+      dispatch(updateJob(id, data))
+        .then((result) => {
           navigate("/administrator/jobs");
+          AlertSuccess("Data Job berhasil diedit");
         })
         .catch((error) => {
+          AlertFailed("Data Job gagal diedit");
           console.log(error);
         });
+      // axios
+      //   .put(`http://localhost:3000/jobs/${id}`, dataJob)
+      //   .then(() => {
+      //     alert("Data berhasil diedit");
+      //     navigate("/administrator/jobs");
+      //   })
+      //   .catch((error) => {
+      //     console.log(error);
+      //   });
     }
   };
 
@@ -81,9 +104,11 @@ const EditJobs = () => {
       jobTitle: "",
       jobCategory: "",
       jobType: "",
+      skills: "",
       location: "",
       salary: 0,
       jobDescription: "",
+      linkApply: "",
     });
   };
 
@@ -167,6 +192,19 @@ const EditJobs = () => {
         });
       }
     }
+    if (name === "skills") {
+      if (value === "") {
+        setErrorMsg({
+          ...errorMsg,
+          skills: "Please select a valid Skills",
+        });
+      } else {
+        setErrorMsg({
+          ...errorMsg,
+          skills: "",
+        });
+      }
+    }
     if (name === "jobDescription") {
       if (value === "") {
         setErrorMsg({
@@ -177,6 +215,19 @@ const EditJobs = () => {
         setErrorMsg({
           ...errorMsg,
           jobDescription: "",
+        });
+      }
+    }
+    if (name === "linkApply") {
+      if (value === "") {
+        setErrorMsg({
+          ...errorMsg,
+          linkApply: "Please provide a valid Link Apply.",
+        });
+      } else {
+        setErrorMsg({
+          ...errorMsg,
+          linkApply: "",
         });
       }
     }
@@ -383,9 +434,11 @@ const EditJobs = () => {
                       onChange={(e) => onChangeValue(e)}
                     >
                       <option value="">Choose job category</option>
-                      <option value="design">Design</option>
-                      <option value="technology">Technology</option>
-                      <option value="marketing">Marketing</option>
+                      <option value="Design">Design</option>
+                      <option value="Technology">Technology</option>
+                      <option value="Digital Marketing">
+                        Digital Marketing
+                      </option>
                     </select>
                     <div className="absolute inset-y-0 right-0 top-7 flex items-center pr-3 pointer-events-none">
                       <svg
@@ -471,6 +524,39 @@ const EditJobs = () => {
                   </div>
                   <div className="mb-4 col-span-2">
                     <label
+                      htmlFor="skills"
+                      className="block mb-2 text-sm font-medium text-form"
+                    >
+                      Skills Requirement
+                    </label>
+                    <textarea
+                      name="skills"
+                      id="skills"
+                      cols="30"
+                      className={`bg-gray-50 text-sm rounded-lg block w-full p-3.5  placeholder-gray-400 text-black border ${
+                        errorMsg.skills ? " border-red-600" : "border-[#CCCCCC]"
+                      } focus:outline-none ${
+                        errorMsg.skills
+                          ? " focus:ring-red-600 focus:border-red-600"
+                          : "focus:ring-blue-500 focus:border-blue-500"
+                      }`}
+                      value={dataJob.skills}
+                      onChange={(e) => onChangeValue(e)}
+                    />
+
+                    {errorMsg.skills ? (
+                      <p
+                        id="filled_success_help"
+                        className="mt-2 text-xs text-red-600 dark:text-red-400"
+                      >
+                        {errorMsg.skills}
+                      </p>
+                    ) : (
+                      <></>
+                    )}
+                  </div>
+                  <div className="mb-4 col-span-2">
+                    <label
                       htmlFor="jobDescription"
                       className="block mb-2 text-sm font-medium text-form"
                     >
@@ -493,19 +579,58 @@ const EditJobs = () => {
                       value={dataJob.jobDescription}
                       onChange={(e) => onChangeValue(e)}
                     />
-                    {/* <input
-                      type="number"
-                      name="salary"
-                      id="salary"
-                      
-                      placeholder="Salary"
-                    /> */}
                     {errorMsg.jobDescription ? (
                       <p
                         id="filled_success_help"
                         className="mt-2 text-xs text-red-600 dark:text-red-400"
                       >
                         {errorMsg.jobDescription}
+                      </p>
+                    ) : (
+                      <></>
+                    )}
+                  </div>
+                  <div className="mb-4 col-span-2">
+                    <label
+                      htmlFor="linkApply"
+                      className="block mb-2 text-sm font-medium text-form"
+                    >
+                      Link Apply
+                    </label>
+                    <div className="flex gap-7">
+                      <input
+                        type="text"
+                        name="linkApply"
+                        id="linkApply"
+                        className={`bg-gray-50 text-sm rounded-lg block w-10/12 p-3.5  placeholder-gray-400 text-black border ${
+                          errorMsg.linkApply
+                            ? " border-red-600"
+                            : "border-[#CCCCCC]"
+                        } focus:outline-none ${
+                          errorMsg.linkApply
+                            ? " focus:ring-red-600 focus:border-red-600"
+                            : "focus:ring-blue-500 focus:border-blue-500"
+                        }`}
+                        placeholder="https://example.com"
+                        value={dataJob.linkApply}
+                        onChange={(e) => onChangeValue(e)}
+                      />
+                      <a
+                        href={dataJob.linkApply}
+                        target="blank"
+                        className={`flex items-center p-3 text-white rounded-lg bg-blue-500 ${
+                          dataJob.linkApply ? "" : "pointer-events-none"
+                        }`}
+                      >
+                        Visit Link
+                      </a>
+                    </div>
+                    {errorMsg.linkApply ? (
+                      <p
+                        id="filled_success_help"
+                        className="mt-2 text-xs text-red-600 dark:text-red-400"
+                      >
+                        {errorMsg.linkApply}
                       </p>
                     ) : (
                       <></>

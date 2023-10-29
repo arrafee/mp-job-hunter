@@ -4,7 +4,11 @@ import Sidebar from "../../../components/Sidebar";
 import Topbar from "../../../components/Topbar";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { addJob } from "../../../redux/actions/jobs";
+import { AlertFailed, AlertSuccess } from "../../../components/Alert";
 const AddJobs = () => {
+  const dispatch = useDispatch();
   const navigate = useNavigate();
 
   const [newJob, setNewJob] = useState({
@@ -12,9 +16,11 @@ const AddJobs = () => {
     jobTitle: "",
     jobCategory: "",
     jobType: "",
+    skills: "",
     location: "",
     salary: 0,
     jobDescription: "",
+    linkApply: "",
   });
 
   const [errorMsg, setErrorMsg] = useState({
@@ -22,9 +28,11 @@ const AddJobs = () => {
     jobTitle: "",
     jobCategory: "",
     jobType: "",
+    skills: "",
     location: "",
     salary: "",
     jobDescription: "",
+    linkApply: "",
   });
 
   const onChangeValue = (e) => {
@@ -45,7 +53,9 @@ const AddJobs = () => {
       newJob.jobType === "" ||
       newJob.location === "" ||
       newJob.salary === 0 ||
-      newJob.jobDescription === ""
+      newJob.skills === "" ||
+      newJob.jobDescription === "" ||
+      newJob.linkApply === ""
     ) {
       setErrorMsg({
         companyName: "Please provide a valid Company Name.",
@@ -54,23 +64,38 @@ const AddJobs = () => {
         jobType: "Please select a valid Job Type",
         location: "Please provide a valid Location.",
         salary: "Please provide a valid Salary.",
+        skills: "Please provide a valid Skills Requirements.",
         jobDescription: "Please provide a valid Job Description.",
+        linkApply: "Please provide a valid Link Apply.",
       });
     } else {
       const id = Math.floor(Math.random() * 90000) + 10000;
+      const slug = newJob.jobCategory.split(" ");
+      const slugCategory = slug.join("-").toLowerCase();
       const data = {
         id: id,
         ...newJob,
+        slugCategory: slugCategory,
       };
-      axios
-        .post("http://localhost:3000/jobs", data)
-        .then(() => {
-          alert("Data berhasil ditambah");
+      dispatch(addJob(data))
+        .then((result) => {
+          // console.log(result);
           navigate("/administrator/jobs");
+          AlertSuccess("Data Job berhasil ditambah");
         })
         .catch((error) => {
+          AlertFailed("Data Job gagal ditambah");
           console.log(error);
         });
+      // axios
+      //   .post("http://localhost:3000/jobs", data)
+      //   .then(() => {
+      //     alert("Data berhasil ditambah");
+      //     navigate("/administrator/jobs");
+      //   })
+      //   .catch((error) => {
+      //     console.log(error);
+      //   });
     }
   };
 
@@ -84,6 +109,7 @@ const AddJobs = () => {
       location: "",
       salary: 0,
       jobDescription: "",
+      linkApply: "",
     });
   };
 
@@ -167,6 +193,19 @@ const AddJobs = () => {
         });
       }
     }
+    if (name === "skills") {
+      if (value === "") {
+        setErrorMsg({
+          ...errorMsg,
+          skills: "Please provide a valid Job Description.",
+        });
+      } else {
+        setErrorMsg({
+          ...errorMsg,
+          skills: "",
+        });
+      }
+    }
     if (name === "jobDescription") {
       if (value === "") {
         setErrorMsg({
@@ -177,6 +216,19 @@ const AddJobs = () => {
         setErrorMsg({
           ...errorMsg,
           jobDescription: "",
+        });
+      }
+    }
+    if (name === "linkApply") {
+      if (value === "") {
+        setErrorMsg({
+          ...errorMsg,
+          linkApply: "Please provide a valid Link Apply.",
+        });
+      } else {
+        setErrorMsg({
+          ...errorMsg,
+          linkApply: "",
         });
       }
     }
@@ -383,9 +435,11 @@ const AddJobs = () => {
                       onChange={(e) => onChangeValue(e)}
                     >
                       <option value="">Choose job category</option>
-                      <option value="design">Design</option>
-                      <option value="technology">Technology</option>
-                      <option value="marketing">Marketing</option>
+                      <option value="Design">Design</option>
+                      <option value="Technology">Technology</option>
+                      <option value="Digital Marketing">
+                        Digital Marketing
+                      </option>
                     </select>
                     <div className="absolute inset-y-0 right-0 top-7 flex items-center pr-3 pointer-events-none">
                       <svg
@@ -471,6 +525,39 @@ const AddJobs = () => {
                   </div>
                   <div className="mb-4 col-span-2">
                     <label
+                      htmlFor="skills"
+                      className="block mb-2 text-sm font-medium text-form"
+                    >
+                      Skills Requirement
+                    </label>
+                    <textarea
+                      name="skills"
+                      id="skills"
+                      cols="30"
+                      className={`bg-gray-50 text-sm rounded-lg block w-full p-3.5  placeholder-gray-400 text-black border ${
+                        errorMsg.skills ? " border-red-600" : "border-[#CCCCCC]"
+                      } focus:outline-none ${
+                        errorMsg.skills
+                          ? " focus:ring-red-600 focus:border-red-600"
+                          : "focus:ring-blue-500 focus:border-blue-500"
+                      }`}
+                      value={newJob.skills}
+                      onChange={(e) => onChangeValue(e)}
+                    />
+
+                    {errorMsg.skills ? (
+                      <p
+                        id="filled_success_help"
+                        className="mt-2 text-xs text-red-600 dark:text-red-400"
+                      >
+                        {errorMsg.skills}
+                      </p>
+                    ) : (
+                      <></>
+                    )}
+                  </div>
+                  <div className="mb-4 col-span-2">
+                    <label
                       htmlFor="jobDescription"
                       className="block mb-2 text-sm font-medium text-form"
                     >
@@ -500,6 +587,52 @@ const AddJobs = () => {
                         className="mt-2 text-xs text-red-600 dark:text-red-400"
                       >
                         {errorMsg.jobDescription}
+                      </p>
+                    ) : (
+                      <></>
+                    )}
+                  </div>
+                  <div className="mb-4 col-span-2">
+                    <label
+                      htmlFor="linkApply"
+                      className="block mb-2 text-sm font-medium text-form"
+                    >
+                      Link Apply
+                    </label>
+                    <div className="flex gap-7">
+                      <input
+                        type="text"
+                        name="linkApply"
+                        id="linkApply"
+                        className={`bg-gray-50 text-sm rounded-lg block w-10/12 p-3.5  placeholder-gray-400 text-black border ${
+                          errorMsg.linkApply
+                            ? " border-red-600"
+                            : "border-[#CCCCCC]"
+                        } focus:outline-none ${
+                          errorMsg.linkApply
+                            ? " focus:ring-red-600 focus:border-red-600"
+                            : "focus:ring-blue-500 focus:border-blue-500"
+                        }`}
+                        placeholder="https://example.com"
+                        value={newJob.linkApply}
+                        onChange={(e) => onChangeValue(e)}
+                      />
+                      <a
+                        href={newJob.linkApply}
+                        target="blank"
+                        className={`flex items-center p-3 text-white rounded-lg bg-blue-500 ${
+                          newJob.linkApply ? "" : "pointer-events-none"
+                        }`}
+                      >
+                        Visit Link
+                      </a>
+                    </div>
+                    {errorMsg.linkApply ? (
+                      <p
+                        id="filled_success_help"
+                        className="mt-2 text-xs text-red-600 dark:text-red-400"
+                      >
+                        {errorMsg.linkApply}
                       </p>
                     ) : (
                       <></>

@@ -10,36 +10,39 @@ import { TbLayoutGridAdd } from "react-icons/tb";
 import { useEffect, useState } from "react";
 import axios from "axios";
 import EditJobs from "./EditJob";
+import { useDispatch, useSelector } from "react-redux";
+import { deleteJob, getJobs } from "../../../redux/actions/jobs";
+import {
+  AlertFailed,
+  AlertSuccess,
+  ConfirmAlert,
+} from "../../../components/Alert";
 
 const Jobs = () => {
-  const [jobs, setJobs] = useState([]);
+  const dispatch = useDispatch();
+  const jobs = useSelector((state) => state.jobs.jobs);
 
-  const getJobs = () => {
-    axios
-      .get("http://localhost:3000/jobs")
-      .then((response) => {
-        setJobs(response.data);
-      })
-      .catch((error) => {
-        console.log(error);
-      });
-  };
+  // console.log(dataJobs);
+
+  // const [jobs, setJobs] = useState([]);
 
   useEffect(() => {
-    getJobs();
-  });
+    dispatch(getJobs());
+  }, [dispatch]);
 
-  const deleteJob = (id) => {
-    axios
-      .delete(`http://localhost:3000/jobs/${id}`)
-      .then(() => {
-        alert("Data berhasil dihapus");
-      })
-      .catch((error) => {
-        alert("Data gagal dihapus");
-        console.log(error);
-      });
-    getJobs();
+  const deleteDataJob = (id) => {
+    ConfirmAlert("Apakah anda yakin menghapus data ini?").then((result) => {
+      if (result) {
+        dispatch(deleteJob(id))
+          .then(() => {
+            AlertSuccess("Data Job berhasil dihapus");
+          })
+          .catch((error) => {
+            AlertFailed("Data Job gagal dihapus");
+            console.log(error);
+          });
+      }
+    });
   };
 
   return (
@@ -145,7 +148,7 @@ const Jobs = () => {
                           <button
                             type="button"
                             className="px-2 inline-block"
-                            onClick={() => deleteJob(item.id)}
+                            onClick={() => deleteDataJob(item.id)}
                           >
                             <HiOutlineTrash className="w-5 h-5 stroke-red-500 hover:stroke-red-700" />
                           </button>

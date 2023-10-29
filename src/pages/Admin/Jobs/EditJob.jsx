@@ -1,21 +1,26 @@
 /* eslint-disable no-unused-vars */
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Sidebar from "../../../components/Sidebar";
 import Topbar from "../../../components/Topbar";
 import axios from "axios";
-import { useNavigate } from "react-router-dom";
-const AddJobs = () => {
+import { useNavigate, useParams } from "react-router-dom";
+const EditJobs = () => {
   const navigate = useNavigate();
 
-  const [newJob, setNewJob] = useState({
-    companyName: "",
-    jobTitle: "",
-    jobCategory: "",
-    jobType: "",
-    location: "",
-    salary: 0,
-    jobDescription: "",
-  });
+  const { id } = useParams();
+
+  const [dataJob, setDataJob] = useState({});
+
+  useEffect(() => {
+    axios
+      .get(`http://localhost:3000/jobs/${id}`)
+      .then((response) => {
+        setDataJob(response.data);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  }, [id]);
 
   const [errorMsg, setErrorMsg] = useState({
     companyName: "",
@@ -29,8 +34,8 @@ const AddJobs = () => {
 
   const onChangeValue = (e) => {
     const { name, value } = e.target;
-    setNewJob({
-      ...newJob,
+    setDataJob({
+      ...dataJob,
       [name]: value,
     });
     validateInput(e);
@@ -39,13 +44,13 @@ const AddJobs = () => {
   const onClickHandle = (e) => {
     e.preventDefault();
     if (
-      newJob.companyName === "" ||
-      newJob.jobTitle === "" ||
-      newJob.jobCategory === "" ||
-      newJob.jobType === "" ||
-      newJob.location === "" ||
-      newJob.salary === 0 ||
-      newJob.jobDescription === ""
+      dataJob.companyName === "" ||
+      dataJob.jobTitle === "" ||
+      dataJob.jobCategory === "" ||
+      dataJob.jobType === "" ||
+      dataJob.location === "" ||
+      dataJob.salary === 0 ||
+      dataJob.jobDescription === ""
     ) {
       setErrorMsg({
         companyName: "Please provide a valid Company Name.",
@@ -57,15 +62,10 @@ const AddJobs = () => {
         jobDescription: "Please provide a valid Job Description.",
       });
     } else {
-      const id = Math.floor(Math.random() * 90000) + 10000;
-      const data = {
-        id: id,
-        ...newJob,
-      };
       axios
-        .post("http://localhost:3000/jobs", data)
+        .put(`http://localhost:3000/jobs/${id}`, dataJob)
         .then(() => {
-          alert("Data berhasil ditambah");
+          alert("Data berhasil diedit");
           navigate("/administrator/jobs");
         })
         .catch((error) => {
@@ -76,7 +76,7 @@ const AddJobs = () => {
 
   const resetForm = (e) => {
     e.preventDefault();
-    setNewJob({
+    setDataJob({
       companyName: "",
       jobTitle: "",
       jobCategory: "",
@@ -243,7 +243,7 @@ const AddJobs = () => {
                           : "focus:ring-blue-500 focus:border-blue-500"
                       } `}
                       placeholder="Company Name"
-                      value={newJob.companyName}
+                      value={dataJob.companyName}
                       onChange={(e) => onChangeValue(e)}
                     />
                     {errorMsg.companyName ? (
@@ -278,7 +278,7 @@ const AddJobs = () => {
                           : "focus:ring-blue-500 focus:border-blue-500"
                       }`}
                       placeholder="Job Title"
-                      value={newJob.jobTitle}
+                      value={dataJob.jobTitle}
                       onChange={(e) => onChangeValue(e)}
                     />
                     {errorMsg.jobTitle ? (
@@ -313,7 +313,7 @@ const AddJobs = () => {
                           : "focus:ring-blue-500 focus:border-blue-500"
                       }`}
                       placeholder="Location"
-                      value={newJob.location}
+                      value={dataJob.location}
                       onChange={(e) => onChangeValue(e)}
                     />
                     {errorMsg.location ? (
@@ -346,7 +346,7 @@ const AddJobs = () => {
                           : "focus:ring-blue-500 focus:border-blue-500"
                       }`}
                       placeholder="Salary"
-                      value={newJob.salary}
+                      value={dataJob.salary}
                       onChange={(e) => onChangeValue(e)}
                     />
                     {errorMsg.salary ? (
@@ -379,7 +379,7 @@ const AddJobs = () => {
                           ? " focus:ring-red-600 focus:border-red-600"
                           : "focus:ring-blue-500 focus:border-blue-500"
                       }`}
-                      value={newJob.jobCategory}
+                      value={dataJob.jobCategory}
                       onChange={(e) => onChangeValue(e)}
                     >
                       <option value="">Choose job category</option>
@@ -433,7 +433,7 @@ const AddJobs = () => {
                           ? " focus:ring-red-600 focus:border-red-600"
                           : "focus:ring-blue-500 focus:border-blue-500"
                       }`}
-                      value={newJob.jobType}
+                      value={dataJob.jobType}
                       onChange={(e) => onChangeValue(e)}
                     >
                       <option value="">Choose job type</option>
@@ -490,10 +490,16 @@ const AddJobs = () => {
                           ? " focus:ring-red-600 focus:border-red-600"
                           : "focus:ring-blue-500 focus:border-blue-500"
                       }`}
-                      value={newJob.jobDescription}
+                      value={dataJob.jobDescription}
                       onChange={(e) => onChangeValue(e)}
                     />
-
+                    {/* <input
+                      type="number"
+                      name="salary"
+                      id="salary"
+                      
+                      placeholder="Salary"
+                    /> */}
                     {errorMsg.jobDescription ? (
                       <p
                         id="filled_success_help"
@@ -519,7 +525,7 @@ const AddJobs = () => {
                     className="text-white bg-[#10B981] font-normal rounded-lg text-sm w-full sm:w-auto px-10 py-2.5 text-center"
                     onClick={(e) => onClickHandle(e)}
                   >
-                    Add
+                    Edit
                   </button>
                 </div>
               </form>
@@ -531,4 +537,4 @@ const AddJobs = () => {
   );
 };
 
-export default AddJobs;
+export default EditJobs;

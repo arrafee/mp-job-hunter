@@ -135,7 +135,12 @@ const Jobs = () => {
                         <td className="p-3">{item.jobType}</td>
                         <td className="p-3">${item.salary}</td>
                         <td className="p-3 text-center">
-                          <Link className="px-2 inline-block" title="detail">
+                          <Link
+                            to={`/detail-job/${item.id}`}
+                            className="px-2 inline-block"
+                            title="detail"
+                            // element={}
+                          >
                             <FiEye className="w-5 h-5 stroke-blue-600 hover:stroke-blue-700" />
                           </Link>
                           <Link

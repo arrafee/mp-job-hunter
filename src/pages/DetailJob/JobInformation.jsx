@@ -1,5 +1,4 @@
 import { useDispatch, useSelector } from "react-redux";
-import jobImage from "../../assets/images/job-image.png";
 import { useParams } from "react-router-dom";
 import { useEffect } from "react";
 import { getJobById } from "../../redux/actions/jobs";

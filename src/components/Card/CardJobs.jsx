@@ -1,5 +1,4 @@
 /* eslint-disable react/prop-types */
-import jobImage from "../../assets/images/job-image.png";
 import { IoLocationOutline } from "react-icons/io5";
 import { AiOutlineCompress } from "react-icons/ai";
 import { Link } from "react-router-dom";

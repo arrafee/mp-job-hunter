@@ -438,12 +438,14 @@ const EditJobs = () => {
                       value={dataJob.jobCategory}
                       onChange={(e) => onChangeValue(e)}
                     >
-                      <option value="">Choose job category</option>
                       <option value="Design">Design</option>
+                      <option value="Sales">Sales</option>
+                      <option value="Marketing">Marketing</option>
+                      <option value="Finance">Finance</option>
                       <option value="Technology">Technology</option>
-                      <option value="Digital Marketing">
-                        Digital Marketing
-                      </option>
+                      <option value="Engineering">Engineering</option>
+                      <option value="Business">Business</option>
+                      <option value="Human Resource">Human Resource</option>
                     </select>
                     <div className="absolute inset-y-0 right-0 top-7 flex items-center pr-3 pointer-events-none">
                       <svg

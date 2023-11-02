@@ -2,7 +2,16 @@
 import { BsChevronDown } from "react-icons/bs";
 // eslint-disable-next-line react/prop-types
 const FilterJobs = ({ changeFilterCategories, changeFilterTypes }) => {
-  const jobCategory = ["Technology", "Design", "Digital Marketing"];
+  const jobCategory = [
+    "Design",
+    "Sales",
+    "Marketing",
+    "Finance",
+    "Technology",
+    "Engineering",
+    "Business",
+    "Human Resource",
+  ];
   const jobTypes = ["Full Time", "Part Time", "Remote", "Contract"];
   const onChangeValue = (e) => {
     const { name, value } = e.target;

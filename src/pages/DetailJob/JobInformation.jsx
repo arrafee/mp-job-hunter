@@ -41,6 +41,15 @@ const JobInformation = () => {
         <div>
           <div dangerouslySetInnerHTML={{ __html: job.jobDescription }} />
         </div>
+        <div className="mt-8">
+          <a
+            href={job.linkApply}
+            target="blank"
+            className=" px-5 py-2 bg-[#10B981] text-white rounded-[10px]"
+          >
+            Apply Now
+          </a>
+        </div>
       </div>
     </>
   );

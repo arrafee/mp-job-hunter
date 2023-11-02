@@ -7,9 +7,13 @@ import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { addJob } from "../../../redux/actions/jobs";
 import { AlertFailed, AlertSuccess } from "../../../components/Alert";
+import ReactQuill from "react-quill";
+import "react-quill/dist/quill.snow.css";
 const AddJobs = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
+
+  const [jobDescription, setJobDescription] = useState("");
 
   const [newJob, setNewJob] = useState({
     companyName: "",
@@ -19,7 +23,6 @@ const AddJobs = () => {
     skills: "",
     location: "",
     salary: 0,
-    jobDescription: "",
     linkApply: "",
   });
 
@@ -41,6 +44,7 @@ const AddJobs = () => {
       ...newJob,
       [name]: value,
     });
+    console.log(value);
     validateInput(e);
   };
 
@@ -54,7 +58,7 @@ const AddJobs = () => {
       newJob.location === "" ||
       newJob.salary === 0 ||
       newJob.skills === "" ||
-      newJob.jobDescription === "" ||
+      jobDescription === "" ||
       newJob.linkApply === ""
     ) {
       setErrorMsg({
@@ -76,6 +80,7 @@ const AddJobs = () => {
         id: id,
         ...newJob,
         slugCategory: slugCategory,
+        jobDescription: jobDescription,
       };
       dispatch(addJob(data))
         .then((result) => {
@@ -108,9 +113,9 @@ const AddJobs = () => {
       jobType: "",
       location: "",
       salary: 0,
-      jobDescription: "",
       linkApply: "",
     });
+    setJobDescription("");
   };
 
   const validateInput = (e) => {
@@ -203,19 +208,6 @@ const AddJobs = () => {
         setErrorMsg({
           ...errorMsg,
           skills: "",
-        });
-      }
-    }
-    if (name === "jobDescription") {
-      if (value === "") {
-        setErrorMsg({
-          ...errorMsg,
-          jobDescription: "Please provide a valid Job Description.",
-        });
-      } else {
-        setErrorMsg({
-          ...errorMsg,
-          jobDescription: "",
         });
       }
     }
@@ -563,7 +555,7 @@ const AddJobs = () => {
                     >
                       Job Description
                     </label>
-                    <textarea
+                    {/* <textarea
                       name="jobDescription"
                       id=""
                       cols="30"
@@ -579,9 +571,15 @@ const AddJobs = () => {
                       }`}
                       value={newJob.jobDescription}
                       onChange={(e) => onChangeValue(e)}
+                    /> */}
+                    <ReactQuill
+                      name="jobDescription"
+                      id="jobDescription"
+                      value={jobDescription}
+                      onChange={(value) => setJobDescription(value)}
                     />
 
-                    {errorMsg.jobDescription ? (
+                    {/* {errorMsg.jobDescription ? (
                       <p
                         id="filled_success_help"
                         className="mt-2 text-xs text-red-600 dark:text-red-400"
@@ -590,7 +588,7 @@ const AddJobs = () => {
                       </p>
                     ) : (
                       <></>
-                    )}
+                    )} */}
                   </div>
                   <div className="mb-4 col-span-2">
                     <label

@@ -7,6 +7,8 @@ import { useNavigate, useParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { getJobById, updateJob } from "../../../redux/actions/jobs";
 import { AlertFailed, AlertSuccess } from "../../../components/Alert";
+import ReactQuill from "react-quill";
+import "react-quill/dist/quill.snow.css";
 const EditJobs = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -15,6 +17,7 @@ const EditJobs = () => {
   const { id } = useParams();
 
   const [dataJob, setDataJob] = useState({});
+  const [jobDescription, setJobDescription] = useState("");
 
   useEffect(() => {
     dispatch(getJobById(id));
@@ -22,6 +25,7 @@ const EditJobs = () => {
 
   useEffect(() => {
     setDataJob(job);
+    setJobDescription(job.jobDescription);
   }, [job]);
 
   const [errorMsg, setErrorMsg] = useState({
@@ -55,7 +59,7 @@ const EditJobs = () => {
       dataJob.skills === "" ||
       dataJob.location === "" ||
       dataJob.salary === 0 ||
-      dataJob.jobDescription === "" ||
+      jobDescription === "" ||
       dataJob.linkApply === ""
     ) {
       setErrorMsg({
@@ -75,6 +79,7 @@ const EditJobs = () => {
       const data = {
         ...dataJob,
         slugCategory: slugCategory,
+        jobDescription: jobDescription,
       };
       dispatch(updateJob(id, data))
         .then((result) => {
@@ -107,9 +112,9 @@ const EditJobs = () => {
       skills: "",
       location: "",
       salary: 0,
-      jobDescription: "",
       linkApply: "",
     });
+    setJobDescription("");
   };
 
   const validateInput = (e) => {
@@ -562,7 +567,7 @@ const EditJobs = () => {
                     >
                       Job Description
                     </label>
-                    <textarea
+                    {/* <textarea
                       name="jobDescription"
                       id=""
                       cols="30"
@@ -588,7 +593,13 @@ const EditJobs = () => {
                       </p>
                     ) : (
                       <></>
-                    )}
+                    )} */}
+                    <ReactQuill
+                      name="jobDescription"
+                      id="jobDescription"
+                      value={jobDescription}
+                      onChange={(value) => setJobDescription(value)}
+                    />
                   </div>
                   <div className="mb-4 col-span-2">
                     <label

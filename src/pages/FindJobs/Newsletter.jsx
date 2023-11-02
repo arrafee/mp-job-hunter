@@ -1,6 +1,6 @@
 /* eslint-disable react/prop-types */
 import { BsSearch } from "react-icons/bs";
-const Newsletter = ({ changeFilterSearch, onClickDataFilter }) => {
+const NewsLetter = ({ changeFilterSearch, onClickDataFilter }) => {
   const onChange = (e) => {
     const { value } = e.target;
     changeFilterSearch(value);
@@ -37,4 +37,4 @@ const Newsletter = ({ changeFilterSearch, onClickDataFilter }) => {
   );
 };
 
-export default Newsletter;
+export default NewsLetter;

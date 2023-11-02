@@ -1,5 +1,5 @@
 /* eslint-disable no-unused-vars */
-import Newsletter from "./NewsLetter";
+import NewsLetter from "./NewsLetter";
 import FilterJobs from "./FiltersJobs";
 import ListJobs from "./ListJobs";
 import { useEffect, useState } from "react";
@@ -55,7 +55,7 @@ const FindJobs = () => {
 
   return (
     <div className="my-8 px-20">
-      <Newsletter
+      <NewsLetter
         changeFilterSearch={changeFilterSearch}
         onClickDataFilter={onClickDataFilter}
       />

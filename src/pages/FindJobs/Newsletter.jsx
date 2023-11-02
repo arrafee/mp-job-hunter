@@ -1,5 +1,11 @@
+/* eslint-disable react/prop-types */
 import { BsSearch } from "react-icons/bs";
-const Newsletter = () => {
+const Newsletter = ({ changeFilterSearch, onClickDataFilter }) => {
+  const onChange = (e) => {
+    const { value } = e.target;
+    changeFilterSearch(value);
+  };
+
   return (
     <>
       <div className="text-center font-semibold text-[2.5rem]">
@@ -15,9 +21,14 @@ const Newsletter = () => {
               type="text"
               className="rounded-[10px] border-[#333333] px-8 w-full"
               placeholder="Enter jobs title keyword"
+              onChange={(e) => onChange(e)}
             />
           </div>
-          <button className="py-2 px-8 rounded-[10px] text-white bg-[#10B981]">
+          <button
+            type="button"
+            className="py-2 px-8 rounded-[10px] text-white bg-[#10B981]"
+            onClick={(e) => onClickDataFilter(e)}
+          >
             Search
           </button>
         </form>

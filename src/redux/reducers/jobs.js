@@ -2,7 +2,7 @@
 /* eslint-disable no-case-declarations */
 const initialState = {
   jobs: [],
-  jobById: null,
+  jobById: {},
 };
 
 const jobsReducer = (state = initialState, action) => {
